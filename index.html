@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Signup Form</h1>
+        <form action="" id="SignupForm">
+              <label for="username">Username</label>
+              <input type="text" id="signupUser" placeholder="Username" required>
+
+              <label for="email">Email</label>
+              <input type="email" id="signupEmail" placeholder="Email" required>
+
+              <label for="password">Password</label>
+              <input type="password" id="signupPassword" placeholder="Password" required>
+
+              <button id="Signupbtn">Signup</button>
+
+              <a href="index1.html">Login</a>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            var button = document.getElementById('Signupbtn');
+            button.addEventListener("click", function(){
+                var Username = document.getElementById('signupUser').value;
+                var Email = document.getElementById('signupEmail').value;
+                var Password = document.getElementById('signupPassword').value;
+
+                // Simple Email Validation
+                if(!validateEmail(Email)){
+                    alert("Enter valid email address");
+                    return;
+                }
+
+                // simple user validation
+                if(!Username.trim()){
+                    alert("enter username");
+                    return;
+                }
+
+                // simple user password
+                if(!Password.trim()){
+                    alert("Enter Password");
+                    return;
+                }
+
+                var obj={
+                    Myusername: Username,
+                    Myemail: Email,
+                    Mypassword: Password
+                };
+
+                fetch("/contact",{
+                    method: "POST",
+                    headers:{
+                        "content-type": "application/json"
+                    },
+                    body: JSON.stringify(obj)
+                })
+
+                .then(response => {
+                    if (response.ok) {
+                        // Signup successful
+                        alert("Signup successful");
+                    } else if (response.status === 400) {
+                        // Email already registered
+                        alert("Email is already used");
+                    } else {
+                        // Handle other errors
+                        alert("An error occurred during signup");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("An error occurred during signup");
+                });
+            });
+        });
+
+        function validateEmail(email){
+            var re = /\S+@\S+\.\S+/;
+            return re.test(email);
+        }
+        
+    </script>
+</body>
+</html>

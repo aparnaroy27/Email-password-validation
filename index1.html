@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Login Form</h1>
+        <form action="" id="LoginForm">
+              
+              <label for="email">Email</label>
+              <input type="email" id="loginEmail" placeholder="Email" required>
+
+              <label for="password">Password</label>
+              <input type="password" id="loginPassword" placeholder="Password" required>
+
+              <button id="Loginbtn">Login</button>
+
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            var button = document.getElementById('Loginbtn');
+            button.addEventListener("click", function(){
+                var Email= document.getElementById('loginEmail').value;
+                var Password= document.getElementById('loginPassword').value;
+ 
+                // simple email validation
+                if(!validateEmail(Email)){
+                    alert("Enter a valid Email Address");
+                    return;
+                }
+
+                // simple password validation
+                if(!Password.trim()){
+                    alert("enter password");
+                    return;
+                }
+
+                var obj={
+                    Myemail: Email,
+                    Mypassword: Password
+                };
+
+                fetch("/contact1",{
+                    method: "POST",
+                    headers:{
+                        "content-type": "application/json"
+                    },
+                    body: JSON.stringify(obj)
+                })
+
+                .then(response => {
+                    if (response.ok) {
+                        // Login successful
+                        alert("Login successful");
+                        window.location.href = "/"; // Redirect to homepage or desired page
+                    } else if (response.status === 401) {
+                        // Incorrect email or password
+                        response.json().then(data => {
+                            if (data.error === "Incorrect email") {
+                                alert("Incorrect email");
+                            } else if (data.error === "Incorrect password") {
+                                alert("Incorrect password");
+                            } else {
+                                alert("An error occurred during login");
+                            }
+                        });
+                    } else {
+                        // Handle other errors
+                        alert("An error occurred during login");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("An error occurred during login");
+                });
+            });
+        });
+
+        function validateEmail(email){
+            var re = /\S+@\S+\.\S+/;
+            return re.test(email);
+        }
+    </script>
+</body>
+</html>
